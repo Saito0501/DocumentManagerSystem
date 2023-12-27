@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.app.dao.MemberDao">
+
+	<resultMap id="joinedResult" type="com.example.app.domain.Member">
+		<id property="id" column="id" />
+		<result property="memberNumber" column="member_number" />
+		<result property="name" column="name" />
+		<result property="loginId" column="login_id" />
+		<result property="loginPass" column="login_pass" />
+		<association property="division" column="division_code" javaType="com.example.app.domain.Division">
+			<id property="code" column="code" />
+			<result property="name" column="division_name" />
+		</association>
+	</resultMap>
+
+	<select id="selectByLoginId" resultMap="joinedResult">
+		SELECT members.*, divisions.code,divisions.name AS division_name
+		FROM members
+		JOIN divisions
+		ON members.division_code = divisions.code
+		WHERE members.login_id = #{loginId}
+	</select>
+	
+</mapper>
