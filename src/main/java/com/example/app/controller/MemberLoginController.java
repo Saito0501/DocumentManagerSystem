@@ -47,7 +47,8 @@ public class MemberLoginController {
 		}
 		// セッションに認証情報を格納
 		LoginStatus loginStatus = new LoginStatus(
-				member.getId(), member.getMemberNumber(), member.getName(), member.getLoginId(),LoginAuthority.MEMBER);
+				member.getId(), member.getMemberNumber(), member.getName(), 
+				member.getDivision().getName(),member.getLoginId(),LoginAuthority.MEMBER);
 		session.setAttribute("loginStatus", loginStatus);
 		return "redirect:/doc/list";
 	}

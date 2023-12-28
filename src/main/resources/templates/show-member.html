@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th= "http://www.thymeleaf.org">
+<head th:replace="~{parts/common::html_head()}"></head>
+<body>
+<div class="container">
+
+<header th:replace="~{parts/common::header()}"></header>
+
+<h1 class="my-4 h3">社員情報</h1>
+<div th:if="${message}" class="alert alert-success mt-4">
+	[[${message}]]
+</div>
+<p>
+	<a th:href="@{/doc/list}" class="btn btn-primary">ドキュメント一覧に戻る</a>
+</p>
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-bordered">
+      <tr>
+        <th>社員番号</th>
+        <td>[[${session.loginStatus.memberNumber}]]</td>
+      </tr>
+      <tr>
+        <th>社員名</th>
+        <td>[[${session.loginStatus.name}]]</td>
+      </tr>
+      <tr>
+        <th>部署</th>
+        <td>[[${session.loginStatus.divisionName}]]</td>
+      </tr>
+      <tr>
+        <th>ログインID</th>
+        <td>[[${session.loginStatus.loginId}]]</td>
+      </tr>
+    </table>
+    <th:block th:each="remind, status : ${remindList}">
+	  <table class="table table-bordered">    
+      	  <tr><th colspan="3" class="text-center">リマインド[[${status.index+1}]]</th></tr>
+		  <tr>
+	        <td class="font-weight-bold">ドキュメントID</td>
+	        <td>[[${remind.documentId}]]</td>
+	        <td rowspan="4" class="align-middle text-center">
+	        	<a th:href="@{/doc/member/show/{id}(id=${remind.id})}" class="btn btn-danger delete"
+	        	   data-toggle="modal" data-target="#confirm-modal" th:data-name="'リマインド'+${status.index+1}">完了</a>
+	        </td>
+	      </tr>
+		  <tr>
+			<td class="font-weight-bold">期限日</td>
+			<td>[[${#dates.format(remind.startDate,'yyyy/MM/dd')}]] ～
+              	[[${#dates.format(remind.endDate,'yyyy/MM/dd')}]]</td>
+		  </tr>
+	   	  <tr>
+	   		<td class="font-weight-bold">登録者</td>
+	   		<td>[[${remind.memberName}]]</td>
+	   	  </tr>
+	   	  <tr>
+	   		<td rowspan="3" class="font-weight-bold">概要</td>
+	   		<td>[[${remind.description}]]</td>
+	   	  </tr>
+	   	  <tr></tr>
+   	  </table>
+   	</th:block>
+  </div><!-- /.col- -->
+</div><!-- /.row -->
+
+</div><!-- /.container -->
+<th:block th:replace="~{parts/common :: javascripts()}"></th:block>
+<th:block th:replace="~{parts/common :: deleteConfirm('リマインド')}"></th:block>
+</body>
+</html>

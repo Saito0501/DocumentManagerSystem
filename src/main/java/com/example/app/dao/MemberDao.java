@@ -8,4 +8,6 @@ import com.example.app.domain.Member;
 public interface MemberDao {
 
 	Member selectByLoginId(String loginId) throws Exception;
+	
+	Member selectById(Integer id) throws Exception;
 }

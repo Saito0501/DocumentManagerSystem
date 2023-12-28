@@ -24,4 +24,8 @@
 		WHERE members.login_id = #{loginId}
 	</select>
 	
+	<select id="selectById" parameterType="int" resultType="com.example.app.domain.Member">
+		SELECT * FROM members WHERE id = #{id}
+	</select>
+	
 </mapper>

@@ -12,6 +12,7 @@ public class LoginStatus {
 	private Integer id;
 	private String memberNumber;
 	private String name;
+	private String divisionName;
 	private String loginId;
 	private int authority;
 	
