@@ -10,9 +10,9 @@ public class Document {
 	private Integer id; 
 	private String fileName;
 	private String description;
-	private String createdName;
+	private Member createdMember;
 	private Date created;
-	private String updatedName;
+	private Member updatedMember;
 	private Date updated;
 	
 }

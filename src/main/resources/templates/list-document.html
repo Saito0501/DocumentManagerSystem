@@ -8,8 +8,73 @@
 
 <h1 class="my-4 h3">ドキュメント一覧</h1>
 
+<div class="row">
+  <div class="col-md-12">
+	<div th:if="${message != null}" class="alert alert-success text-center w-75 mx-auto">
+		[[${message}]]
+	</div>
+	<!-- リマインドメッセージ -->
+	<div th:if="${RemindCount>0}" class="alert alert-danger text-center w-75 mx-auto">
+		未完了のリマインドが、<a th:href="@{/doc/member/show}" class="RemindCnt">[[${RemindCount}]]</a>件あります。
+	</div>
+	<div class="row">
+      <div class="col-4"><a th:href="@{/doc/add}" class="btn btn-primary">ドキュメントの追加</a></div>
+      <div class="form-group col-8">
+        <form class="form float-right" action="" method="get">
+          <input type="text" name="fileName" th:value="${fileName}">
+          <input class="btn btn-primary" type="submit" value="検索">
+        </form>
+      </div>
+    </div>
+    <table class="table table-bordered">
+      <tr>
+        <th>ID</th>
+        <th>ファイル名</th>
+        <th>概要</th>
+        <th>登録者</th>
+        <th>更新者</th>
+        <th>登録日付</th>
+        <th>更新日付</th>
+        <th>更新</th>
+        <th>削除</th>
+      </tr>
+      <tr th:each="document : ${documentList}">
+        <td>[[${document.id}]]</td>
+        <td><a th:href="@{/uploads/{id}/{fileName}(id=${document.id},fileName=${document.fileName})}" download>
+        	[[${document.fileName}]]</a></td>
+        <td>[[${document.description}]]</td>
+        <td>[[${document.createdMember.name}]]</td>
+        <td>[[${document.updatedMember.name}]]</td>
+        <td>[[${#dates.format(document.created,'yyyy/MM/dd HH:mm:ss')}]]</td>
+        <td>[[${#dates.format(document.created,'yyyy/MM/dd HH:mm:ss')}]]</td>
+        <td><a th:href="@{/doc/edit/{id}(id=${document.id})}" class="btn btn-warning btn-sm">編集</a></td>
+        <td><a th:href="@{/doc/delete/{id}(id=${document.id})}" class="btn btn-danger btn-sm delete"
+        	   data-toggle="modal" data-target="#confirm-modal" th:data-name="'ドキュメントID='+${document.id}">削除</a></td>
+      </tr>
+    </table>
+	<!-- ページネーションを表示 -->
+	<div th:replace="~{widget/pagination :: pagination(${totalPages}, ${page}, 'doc/list')}"></div>
+    
+  </div><!-- /.col- -->
+</div><!-- /.row -->
 
 </div><!-- /.container -->
 <th:block th:replace="~{parts/common :: javascripts()}"></th:block>
+<th:block th:replace="~{parts/common :: deleteConfirm('ドキュメント')}"></th:block>
+<script>
+	$(document).ready(function(){
+		//検索状態を維持したままページネーションを行うための処理
+		$('.page-link').click(function(){
+			let fileName = location.search;
+			if(fileName.includes('fileName=')){
+				fileName = fileName.substr(fileName.indexOf('fileName'));
+				let url = $(this).attr('href');
+				if(url!=''){
+					$(this).attr('href',url+'&'+fileName);
+				}
+			}
+		});
+	});
+</script>
 </body>
 </html>
