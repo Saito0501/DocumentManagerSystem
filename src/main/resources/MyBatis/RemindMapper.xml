@@ -5,7 +5,11 @@
 <mapper namespace="com.example.app.dao.RemindDao">
 
 	<select id="selectByTargetId" resultType="com.example.app.domain.Remind">
-		SELECT * FROM reminds WHERE target_id = #{targetId}
+		SELECT reminds.* ,members.name AS member_name 
+		FROM reminds 
+		JOIN members
+		ON reminds.member_id = members.id
+		WHERE reminds.target_id = #{targetId}
 	</select>
 
 	<delete id="delete" parameterType="int">

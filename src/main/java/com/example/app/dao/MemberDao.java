@@ -13,5 +13,4 @@ public interface MemberDao {
 	
 	Member selectByLoginId(String loginId) throws Exception;
 	
-	Member selectById(Integer id) throws Exception;
 }

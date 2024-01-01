@@ -19,13 +19,7 @@ public class RemindServiceImpl implements RemindService {
 	
 	@Override
 	public List<Remind> getRemindByTargetId(Integer targetId) throws Exception {
-		//ログイン認証した社員を対象とするリマインド情報を全て取得する
-		List<Remind> remidList = remindDao.selectByTargetId(targetId);
-		for (Remind remind : remidList) {
-			//登録者の氏名を取得する
-			remind.setMemberName(memberDao.selectById(remind.getMemberId()).getName());
-		}
-		return remidList;
+		return remindDao.selectByTargetId(targetId);
 	}
 
 	@Override
