@@ -13,4 +13,5 @@ public interface RemindDao {
 	
 	void delete(Integer id) throws Exception;
 	
+	void insert(Remind remind) throws Exception;
 }

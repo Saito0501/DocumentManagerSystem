@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th= "http://www.thymeleaf.org">
+<head th:replace="~{parts/common::html_head()}"></head>
+<body>
+<div class="container">
+
+<header th:replace="~{parts/common::header()}"></header>
+
+  <h1 class="my-4 h3">ドキュメント追加</h1>
+
+  <div class="row">
+    <div class="col-md-12 mb-5">
+      <span class="text-danger">※アップロード可能ドキュメント「doc, docx, xls, xlsx, ppt, pptx,pdf,csv」</span>
+      <form class="form" action="" method="post" th:object="${documentForm}" enctype="multipart/form-data" id="form">
+        <table class="table table-bordered">
+          <tr>
+            <th>ファイル</th>
+            <td colspan="2">
+              <span class="text-danger" th:errors="*{upfile}"></span>
+              <div class="form-group">
+                <input type="file" th:field="*{upfile}" id="upfile" class="form-control-file">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>概要</th>
+            <td colspan="2">
+              <div class="form-group">
+                <textarea th:field="*{description}" cols="40" rows="5" class="form-control"></textarea>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th rowspan="2">アクセス権</th>
+            <td>部署</td>
+            <td>
+              <div class="form-check">
+                <th:block th:each="division,status : ${divisionList}">
+                  <input type="checkbox" th:field="*{accessDivisionList}" th:value="${division.code}" class="form-check-input">
+                  <label class="form-check-label mr-5" th:for="'accessDivisionList'+${status.index+1}">[[${division.name}]]</label>
+                </th:block>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>閲覧可能社員</td>
+            <td>
+              <span class="text-danger" th:errors="*{accessMemberIdList}"></span>
+              <div class="form-check">
+                <div th:each="division : ${divisionList}">
+                  <th:block th:each="memberList,status : ${memberList}" th:if="${division.code==memberList.division.code}">
+                    <input type="checkbox" th:field="*{accessMemberIdList}" th:value="${memberList.id}" class="form-check-input">
+                    <label class="form-check-label mr-5" th:for="'accessMemberIdList'+${status.index+1}">[[${memberList.name}]]</label>
+                    <input type="hidden" class="accessDivision" th:value="${memberList.division.code}">
+                  </th:block>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th rowspan="4">リマインド</th>
+            <td>部署</td>
+            <td>
+              <div class="form-check">
+                <th:block th:each="division,status : ${divisionList}">
+                  <input type="checkbox" th:field="*{remindDivisionList}" th:value="${division.code}" class="form-check-input">
+                  <label class="form-check-label mr-5" th:for="'remindDivisionList'+${status.index+1}">[[${division.name}]]</label>
+                </th:block>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>登録対象社員</td>
+            <td>
+              <div class="form-check">
+                <div th:each="division : ${divisionList}">
+                  <th:block th:each="memberList,status : ${memberList}" th:if="${division.code==memberList.division.code}">
+                    <input type="checkbox" th:field="*{remindMemberIdList}" th:value="${memberList.id}" class="form-check-input">
+                    <label class="form-check-label mr-5" th:for="'remindMemberIdList'+${status.index+1}">[[${memberList.name}]]</label>
+                    <input type="hidden" class="remindDivision" th:value="${memberList.division.code}">
+                  </th:block>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>期限日</td>
+            <td>
+              <span class="text-danger" th:errors="*{remindStartDate}"></span>
+              <div class="form-group form-inline">
+                <input type="date" th:field="*{remindStartDate}" class="form-control w-25">&nbsp;～&nbsp; 
+                <input type="date" th:field="*{remindEndDate}" class="form-control w-25">              
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>説明</td>
+            <td>
+              <div class="form-group">
+                <textarea th:field="*{remindDescription}" cols="40" rows="5" class="form-control"></textarea>            
+              </div>
+            </td>
+          </tr>
+        </table>
+        <input class="btn btn-primary" type="submit" value="保存する">
+        <a th:href="@{/doc/list}" class="btn btn-light">キャンセル</a>
+      </form>
+
+    </div><!-- /.col- -->
+  </div><!-- /.row -->
+
+</div><!-- /.container -->
+<th:block th:replace="~{parts/common :: javascripts()}"></th:block>
+<script>
+	$(document).ready(function(){
+ 		const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB 
+		$('#form').on('submit', (event) => {
+			const file = $('#upfile')[0].files[0];
+			if (file != undefined && file.size >= MAX_FILE_SIZE) {
+				// 送信しない
+				event.preventDefault();
+				// エラーメッセージを含む span 要素を生成
+				const errorMessage = $('<span>');
+				errorMessage.addClass('text-danger');
+				errorMessage.text('ファイルサイズが大き過ぎます');
+				$('#upfile').parent().before(errorMessage);
+			}
+		});  
+		
+		//部署から社員を全選択
+		$('input[name="accessDivisionList"]').click(function(){
+			let divi = $(this).attr('value');
+			let check = $(this).prop('checked');
+			$('.accessDivision').each(function(){
+				if(divi==$(this).attr('value')){
+					let element = $(this).prev().prev().prev();
+					element.prop('checked',check);	
+				}
+			});
+		});
+		$('input[name="remindDivisionList"]').click(function(){
+			let divi = $(this).attr('value');
+			let check = $(this).prop('checked');
+			$('.remindDivision').each(function(){
+				if(divi==$(this).attr('value')){
+					let element = $(this).prev().prev().prev();
+					element.prop('checked',check);	
+				}
+			});
+		});
+	});
+</script>
+</body>
+</html>

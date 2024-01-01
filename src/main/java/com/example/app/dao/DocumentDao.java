@@ -20,4 +20,5 @@ public interface DocumentDao {
 			@Param("offset") int offset,@Param("num") int num) throws Exception;
 	Long countSearch(@Param("memberId") int memberId,@Param("fileName") String fileName) throws Exception;
 	
+	void insert(Document document) throws Exception;
 }

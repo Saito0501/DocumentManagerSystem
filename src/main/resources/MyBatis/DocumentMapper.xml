@@ -53,7 +53,7 @@
 		JOIN accesses
 		ON documents.id = accesses.document_id
 		WHERE accesses.member_id = #{memberId}
-		AND documents.file_name = #{fileName}
+		AND documents.file_name LIKE CONCAT('%',#{fileName},'%')
 		LIMIT #{offset},#{num}
 	</select>
 	
@@ -67,7 +67,18 @@
 		JOIN accesses
 		ON documents.id = accesses.document_id
 		WHERE accesses.member_id = #{memberId}
-		AND documents.file_name = #{fileName}
+		AND documents.file_name LIKE CONCAT('%',#{fileName},'%')
 	</select>
+	
+	<insert id="insert" parameterType="com.example.app.domain.Document"
+			useGeneratedKeys="true" keyProperty="id"> 
+		INSERT INTO documents (
+			file_name, description, created_id,
+			created, updated_id, updated
+		) VALUES (
+			#{fileName}, #{description}, #{createdMember.id},
+			NOW(), #{updatedMember.id}, NOW()
+		)
+	</insert>
 	
 </mapper>

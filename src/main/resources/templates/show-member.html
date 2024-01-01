@@ -44,15 +44,15 @@
 	        	   data-toggle="modal" data-target="#confirm-modal" th:data-name="'リマインド'+${status.index+1}">完了</a>
 	        </td>
 	      </tr>
+	   	  <tr>
+	   		<td class="font-weight-bold">登録者</td>
+	   		<td>[[${remind.memberName}]]</td>
+	   	  </tr>
 		  <tr>
 			<td class="font-weight-bold">期限日</td>
 			<td>[[${#dates.format(remind.startDate,'yyyy/MM/dd')}]] ～
               	[[${#dates.format(remind.endDate,'yyyy/MM/dd')}]]</td>
 		  </tr>
-	   	  <tr>
-	   		<td class="font-weight-bold">登録者</td>
-	   		<td>[[${remind.memberName}]]</td>
-	   	  </tr>
 	   	  <tr>
 	   		<td rowspan="3" class="font-weight-bold">概要</td>
 	   		<td>[[${remind.description}]]</td>

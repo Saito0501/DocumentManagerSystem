@@ -12,4 +12,14 @@
 		DELETE FROM reminds WHERE id = #{id} 
 	</delete>
 	
+	<insert id="insert" parameterType="com.example.app.domain.Remind"
+			useGeneratedKeys="true" keyProperty="id"> 
+		INSERT INTO reminds (
+			document_id, member_id, target_id,
+			start_date, end_date, description, created
+		) VALUES (
+			#{documentId}, #{memberId}, #{targetId},
+			#{startDate}, #{endDate}, #{description}, NOW()
+		)
+	</insert>
 </mapper>

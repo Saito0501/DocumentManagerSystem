@@ -15,6 +15,13 @@
 			<result property="name" column="division_name" />
 		</association>
 	</resultMap>
+	
+	<select id="selectAll" resultMap="joinedResult">
+		SELECT members.*, divisions.code,divisions.name AS division_name
+		FROM members
+		JOIN divisions
+		ON members.division_code = divisions.code
+	</select>
 
 	<select id="selectByLoginId" resultMap="joinedResult">
 		SELECT members.*, divisions.code,divisions.name AS division_name
