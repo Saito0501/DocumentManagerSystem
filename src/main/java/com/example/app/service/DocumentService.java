@@ -20,4 +20,6 @@ public interface DocumentService {
 	 DocumentForm getDocumentById(Integer id) throws Exception;
 	 
 	 void editDocument(DocumentForm formData, HttpSession session) throws Exception;
+	 
+	 void deleteDocument(Integer id) throws Exception;
 }

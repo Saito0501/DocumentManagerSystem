@@ -25,4 +25,6 @@ public interface DocumentDao {
 	Document selectById(Integer id) throws Exception;
 	
 	void update(Document document) throws Exception;
+	
+	void delete(Integer id) throws Exception;
 }

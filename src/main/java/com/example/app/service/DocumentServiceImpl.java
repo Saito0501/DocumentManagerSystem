@@ -183,4 +183,14 @@ public class DocumentServiceImpl implements DocumentService {
 		}
 	}
 
+	@Override
+	public void deleteDocument(Integer id) throws Exception {
+		//remindsテーブル削除
+		remindDao.deleteByDocumentId(id);
+		//accessesテーブル削除
+		accessDao.deleteByDocumentId(id);
+		//documentsテーブル削除
+		documentDao.delete(id);
+	}
+
 }

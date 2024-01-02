@@ -174,4 +174,13 @@ public class DocumentController {
 		return "redirect:/doc/list";
 	}
 	
+	@GetMapping("/delete/{id}")
+	public String deleteGet(
+			@PathVariable("id") Integer id,
+			RedirectAttributes redirectAttributes) throws Exception {
+		documentService.deleteDocument(id);
+		redirectAttributes.addFlashAttribute("message", "ドキュメントを削除しました。");
+		return "redirect:/doc/list";
+	}
+	
 }

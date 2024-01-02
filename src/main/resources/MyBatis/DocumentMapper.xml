@@ -94,4 +94,8 @@
 		WHERE id = #{id}
 	</update>
 	
+	<delete id="delete" parameterType="int">
+		 DELETE FROM documents WHERE id = #{id} 
+	</delete>
+	
 </mapper>
