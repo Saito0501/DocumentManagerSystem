@@ -15,6 +15,8 @@ import lombok.Data;
 public class DocumentForm {
 
 	private MultipartFile upfile;
+	private Integer documentId;	//ドキュメント編集用
+	private String fileName;	//ドキュメント編集用
 	private String description;
 	private List<Integer> accessDivisionList;
 	@Size(min=1)

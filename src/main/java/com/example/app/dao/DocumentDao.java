@@ -21,4 +21,8 @@ public interface DocumentDao {
 	Long countSearch(@Param("memberId") int memberId,@Param("fileName") String fileName) throws Exception;
 	
 	void insert(Document document) throws Exception;
+	
+	Document selectById(Integer id) throws Exception;
+	
+	void update(Document document) throws Exception;
 }

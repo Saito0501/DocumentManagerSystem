@@ -14,4 +14,8 @@ public interface RemindDao {
 	void delete(Integer id) throws Exception;
 	
 	void insert(Remind remind) throws Exception;
+
+	List<Remind> selectByDocumentId(Integer documentId) throws Exception;
+	
+	void deleteByDocumentId(Integer documentId) throws Exception;
 }

@@ -46,7 +46,7 @@
         <td>[[${document.createdMember.name}]]</td>
         <td>[[${document.updatedMember.name}]]</td>
         <td>[[${#dates.format(document.created,'yyyy/MM/dd HH:mm:ss')}]]</td>
-        <td>[[${#dates.format(document.created,'yyyy/MM/dd HH:mm:ss')}]]</td>
+        <td>[[${#dates.format(document.updated,'yyyy/MM/dd HH:mm:ss')}]]</td>
         <td><a th:href="@{/doc/edit/{id}(id=${document.id})}" class="btn btn-warning btn-sm">編集</a></td>
         <td><a th:href="@{/doc/delete/{id}(id=${document.id})}" class="btn btn-danger btn-sm delete"
         	   data-toggle="modal" data-target="#confirm-modal" th:data-name="'ドキュメントID='+${document.id}">削除</a></td>

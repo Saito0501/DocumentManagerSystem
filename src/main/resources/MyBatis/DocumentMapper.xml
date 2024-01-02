@@ -28,6 +28,7 @@
 		JOIN accesses
 		ON documents.id = accesses.document_id
 		WHERE accesses.member_id = #{memberId}
+		ORDER BY documents.id
 		LIMIT #{offset},#{num}
 	</select>
 	
@@ -54,6 +55,7 @@
 		ON documents.id = accesses.document_id
 		WHERE accesses.member_id = #{memberId}
 		AND documents.file_name LIKE CONCAT('%',#{fileName},'%')
+		ORDER BY documents.id
 		LIMIT #{offset},#{num}
 	</select>
 	
@@ -80,5 +82,16 @@
 			NOW(), #{updatedMember.id}, NOW()
 		)
 	</insert>
+	
+	<select id="selectById" parameterType="int" resultType="com.example.app.domain.Document">
+		SELECT * FROM documents WHERE id = #{id}
+	</select>
+	
+	<update id="update" parameterType="com.example.app.domain.Document"> 
+		UPDATE documents SET
+		file_name = #{fileName}, description= #{description},
+		updated_id = #{updatedMember.id}, updated = NOW()
+		WHERE id = #{id}
+	</update>
 	
 </mapper>

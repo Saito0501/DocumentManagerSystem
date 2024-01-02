@@ -4,7 +4,7 @@
 
 <mapper namespace="com.example.app.dao.RemindDao">
 
-	<select id="selectByTargetId" resultType="com.example.app.domain.Remind">
+	<select id="selectByTargetId" parameterType="int" resultType="com.example.app.domain.Remind">
 		SELECT reminds.* ,members.name AS member_name 
 		FROM reminds 
 		JOIN members
@@ -16,8 +16,7 @@
 		DELETE FROM reminds WHERE id = #{id} 
 	</delete>
 	
-	<insert id="insert" parameterType="com.example.app.domain.Remind"
-			useGeneratedKeys="true" keyProperty="id"> 
+	<insert id="insert" parameterType="com.example.app.domain.Remind"> 
 		INSERT INTO reminds (
 			document_id, member_id, target_id,
 			start_date, end_date, description, created
@@ -26,4 +25,13 @@
 			#{startDate}, #{endDate}, #{description}, NOW()
 		)
 	</insert>
+	
+	<select id="selectByDocumentId" parameterType="int" resultType="com.example.app.domain.Remind">
+		SELECT * FROM reminds WHERE document_id = #{documentId}
+	</select>
+	
+	<delete id="deleteByDocumentId" parameterType="int">
+		 DELETE FROM reminds WHERE document_id = #{documentId} 
+	</delete>
+	
 </mapper>

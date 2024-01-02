@@ -123,4 +123,55 @@ public class DocumentController {
 		redirectAttributes.addFlashAttribute("message", "ドキュメントを追加しました。");
 		return "redirect:/doc/list";
 	}
+	
+	@GetMapping("/edit/{id}")
+	public String editGet(
+			@PathVariable Integer id,
+			Model model) throws Exception {
+		model.addAttribute("documentForm", documentService.getDocumentById(id));
+		model.addAttribute("memberList", memberService.getMemberList());
+		model.addAttribute("divisionList", divisionService.getDivisionList());
+		return "edit-document";
+	}
+	
+	@PostMapping("/edit/{id}")
+	public String editPost(
+			@Valid @ModelAttribute("documentForm") DocumentForm documentForm,
+			Errors errors,
+			HttpSession session,
+			RedirectAttributes redirectAttributes,
+			Model model) throws Exception {
+		MultipartFile upfile = documentForm.getUpfile();
+		//アップロードファイルのチェック
+		if (!upfile.isEmpty() && !documentForm.isFileContentType(upfile.getContentType())) {
+			errors.rejectValue("upfile", "error.not_contentType_file");
+		}
+		//リマインド情報のチェック
+		if (documentForm.getRemindMemberIdList().size()>0) {
+			if ((documentForm.getRemindStartDate()==null) || (documentForm.getRemindEndDate()==null)) {
+				errors.rejectValue("remindStartDate", "error.null_remindStartDate");
+			}else {
+				if (documentForm.getRemindStartDate().after(documentForm.getRemindEndDate())) {
+					errors.rejectValue("remindStartDate", "error.fraud_remindStartDate");
+				}
+			}
+			//リマインド対象者に閲覧許可がない社員がいる場合、
+			for (Integer remindMember : documentForm.getRemindMemberIdList()) {
+				if (!documentForm.getAccessMemberIdList().contains(remindMember)) {
+					errors.rejectValue("accessMemberIdList", "error.not_accessMember");
+					break;
+				}
+			}	
+		}
+		
+		if (errors.hasErrors()) {
+			model.addAttribute("memberList", memberService.getMemberList());
+			model.addAttribute("divisionList", divisionService.getDivisionList());
+			return "edit-document";
+		}
+		documentService.editDocument(documentForm, session);
+		redirectAttributes.addFlashAttribute("message", "ドキュメントを更新しました。");
+		return "redirect:/doc/list";
+	}
+	
 }

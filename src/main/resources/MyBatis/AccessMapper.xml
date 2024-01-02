@@ -4,13 +4,20 @@
 
 <mapper namespace="com.example.app.dao.AccessDao">
 
-	<insert id="insert" parameterType="com.example.app.domain.Access"
-			useGeneratedKeys="true" keyProperty="id"> 
+	<insert id="insert" parameterType="com.example.app.domain.Access"> 
 		INSERT INTO accesses (
 			document_id, member_id, created
 		) VALUES (
 			#{documentId}, #{memberId}, NOW()
 		)
 	</insert>
+	
+	<select id="selectByDocumentId" parameterType="int" resultType="com.example.app.domain.Access">
+		SELECT * FROM accesses WHERE document_id = #{documentId}
+	</select>
+	
+	<delete id="deleteByDocumentId" parameterType="int">
+		 DELETE FROM accesses WHERE document_id = #{documentId} 
+	</delete>
 
 </mapper>
