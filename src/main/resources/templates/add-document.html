@@ -46,6 +46,7 @@
             <td>閲覧可能社員</td>
             <td>
               <span class="text-danger" th:errors="*{accessMemberIdList}"></span>
+              <input type="hidden" id="loginId" th:value="${session.loginStatus.id}">
               <div class="form-check">
                 <div th:each="division : ${divisionList}">
                   <th:block th:each="memberList,status : ${memberList}" th:if="${division.code==memberList.division.code}">
@@ -111,44 +112,6 @@
 
 </div><!-- /.container -->
 <th:block th:replace="~{parts/common :: javascripts()}"></th:block>
-<script>
-	$(document).ready(function(){
- 		const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB 
-		$('#form').on('submit', (event) => {
-			const file = $('#upfile')[0].files[0];
-			if (file != undefined && file.size >= MAX_FILE_SIZE) {
-				// 送信しない
-				event.preventDefault();
-				// エラーメッセージを含む span 要素を生成
-				const errorMessage = $('<span>');
-				errorMessage.addClass('text-danger');
-				errorMessage.text('ファイルサイズが大き過ぎます');
-				$('#upfile').parent().before(errorMessage);
-			}
-		});  
-		
-		//部署から社員を全選択
-		$('input[name="accessDivisionList"]').click(function(){
-			let divi = $(this).attr('value');
-			let check = $(this).prop('checked');
-			$('.accessDivision').each(function(){
-				if(divi==$(this).attr('value')){
-					let element = $(this).prev().prev().prev();
-					element.prop('checked',check);	
-				}
-			});
-		});
-		$('input[name="remindDivisionList"]').click(function(){
-			let divi = $(this).attr('value');
-			let check = $(this).prop('checked');
-			$('.remindDivision').each(function(){
-				if(divi==$(this).attr('value')){
-					let element = $(this).prev().prev().prev();
-					element.prop('checked',check);	
-				}
-			});
-		});
-	});
-</script>
+<script th:replace="~{parts/common :: addEditDocument()}"></script>
 </body>
 </html>
