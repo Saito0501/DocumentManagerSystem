@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.app.dao.DocumentDao">
+
+	<resultMap id="joinedResult" type="com.example.app.domain.Document">
+		<id property="id" column="id" />
+		<result property="fileName" column="file_name" />
+		<result property="description" column="description" />
+		<result property="created" column="created" />
+		<result property="updated" column="updated" />
+		<association property="createdMember" column="created_id" javaType="com.example.app.domain.Member">
+			<result property="name" column="created_name" />
+		</association>
+		<association property="updatedMember" column="updated_id" javaType="com.example.app.domain.Member">
+			<result property="name" column="updated_name" />
+		</association>
+	</resultMap>
+
+	<select id="selectLimitedByMemberId" resultMap="joinedResult">
+		SELECT documents.*,M1.name AS created_name, M2.name AS updated_name
+		FROM documents 
+		JOIN members AS M1
+		ON documents.created_id = M1.id
+		JOIN members AS M2
+		ON documents.updated_id = M2.id
+		JOIN accesses
+		ON documents.id = accesses.document_id
+		WHERE accesses.member_id = #{memberId}
+		ORDER BY documents.id
+		LIMIT #{offset},#{num}
+	</select>
+	
+	<select id="countSelect" resultType="long">
+		SELECT COUNT(*)
+		FROM documents 
+		JOIN members AS M1
+		ON documents.created_id = M1.id
+		JOIN members AS M2
+		ON documents.updated_id = M2.id
+		JOIN accesses
+		ON documents.id = accesses.document_id
+		WHERE accesses.member_id = #{memberId}
+	</select>
+	
+	<select id="searchByFileName" resultMap="joinedResult">
+		SELECT documents.*,M1.name AS created_name, M2.name AS updated_name
+		FROM documents 
+		JOIN members AS M1
+		ON documents.created_id = M1.id
+		JOIN members AS M2
+		ON documents.updated_id = M2.id
+		JOIN accesses
+		ON documents.id = accesses.document_id
+		WHERE accesses.member_id = #{memberId}
+		AND documents.file_name LIKE CONCAT('%',#{fileName},'%')
+		ORDER BY documents.id
+		LIMIT #{offset},#{num}
+	</select>
+	
+	<select id="countSearch" resultType="long">
+		SELECT COUNT(*)
+		FROM documents 
+		JOIN members AS M1
+		ON documents.created_id = M1.id
+		JOIN members AS M2
+		ON documents.updated_id = M2.id
+		JOIN accesses
+		ON documents.id = accesses.document_id
+		WHERE accesses.member_id = #{memberId}
+		AND documents.file_name LIKE CONCAT('%',#{fileName},'%')
+	</select>
+	
+	<insert id="insert" parameterType="com.example.app.domain.Document"
+			useGeneratedKeys="true" keyProperty="id"> 
+		INSERT INTO documents (
+			file_name, description, created_id,
+			created, updated_id, updated
+		) VALUES (
+			#{fileName}, #{description}, #{createdMember.id},
+			NOW(), #{updatedMember.id}, NOW()
+		)
+	</insert>
+	
+	<select id="selectById" parameterType="int" resultType="com.example.app.domain.Document">
+		SELECT * FROM documents WHERE id = #{id}
+	</select>
+	
+	<update id="update" parameterType="com.example.app.domain.Document"> 
+		UPDATE documents SET
+		file_name = #{fileName}, description= #{description},
+		updated_id = #{updatedMember.id}, updated = NOW()
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		 DELETE FROM documents WHERE id = #{id} 
+	</delete>
+	
+</mapper>

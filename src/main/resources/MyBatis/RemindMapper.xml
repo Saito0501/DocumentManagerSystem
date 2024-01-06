@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.app.dao.RemindDao">
+
+	<select id="selectByTargetId" parameterType="int" resultType="com.example.app.domain.Remind">
+		SELECT reminds.* ,members.name AS member_name 
+		FROM reminds 
+		JOIN members
+		ON reminds.member_id = members.id
+		WHERE reminds.target_id = #{targetId}
+	</select>
+
+	<delete id="delete" parameterType="int">
+		DELETE FROM reminds WHERE id = #{id} 
+	</delete>
+	
+	<insert id="insert" parameterType="com.example.app.domain.Remind"> 
+		INSERT INTO reminds (
+			document_id, member_id, target_id,
+			start_date, end_date, description, created
+		) VALUES (
+			#{documentId}, #{memberId}, #{targetId},
+			#{startDate}, #{endDate}, #{description}, NOW()
+		)
+	</insert>
+	
+	<select id="selectByDocumentId" parameterType="int" resultType="com.example.app.domain.Remind">
+		SELECT * FROM reminds WHERE document_id = #{documentId}
+	</select>
+	
+	<delete id="deleteByDocumentId" parameterType="int">
+		 DELETE FROM reminds WHERE document_id = #{documentId} 
+	</delete>
+	
+</mapper>
