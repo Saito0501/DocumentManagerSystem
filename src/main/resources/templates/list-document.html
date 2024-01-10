@@ -6,8 +6,11 @@
 
 <header th:replace="~{parts/common::header()}"></header>
 
-<h1 class="my-4 h3">ドキュメント一覧</h1>
-
+<div class="row">
+  <div class="col-4 text-nowrap"><h1 class="my-4 h3">ドキュメント一覧</h1></div>
+  <div class="col-8 text-nowrap float-right text-right">
+  <a th:href="@{/doc/listGroup}" class="btn btn-primary my-4 h3 mr-3">表示切替</a></div>
+</div>
 <div class="row">
   <div class="col-md-12">
 	<div th:if="${message != null}" class="alert alert-success text-center w-75 mx-auto">
@@ -18,41 +21,42 @@
 		未完了のリマインドが、<a th:href="@{/doc/member/show}" class="RemindCnt">[[${RemindCount}]]</a>件あります。
 	</div>
 	<div class="row">
-      <div class="col-4 text-nowrap"><a th:href="@{/doc/add}" class="btn btn-primary">ドキュメントの追加</a></div>
-      <div class="form-group col-8">
-        <form class="form float-right form-inline" action="" method="get">
-          <input type="text" class="form-control mr-1" style="width:auto" name="fileName" th:value="${fileName}" placeholder="ファイル名">
+      <div class="col-6 text-nowrap"><a th:href="@{/doc/add}" class="btn btn-primary">ドキュメントの追加</a></div>
+      <div class="form-group col-6">
+        <form class="form float-right" style="display:flex;" action="" method="get">
+          <input type="text" class="form-control mr-1" name="fileName" th:value="${fileName}" placeholder="ファイル名">
           <input type="submit" class="btn btn-primary" value="検索">
         </form>
       </div>
     </div>
     <div class="table-responsive-xl">
-    <table class="table table-bordered" style="table-layout: fixed">
-      <tr>
-        <th style="width:42px">ID</th>
-        <th style="width:223px">ファイル名</th>
-        <th style="width:179px">概要</th>
-        <th style="width:94px">登録者</th>
-        <th style="width:94px">更新者</th>
-        <th style="width:146px">登録日付</th>
-        <th style="width:146px">更新日付</th>
-        <th style="width:92px">更新</th>
-        <th style="width:92px">削除</th>
-      </tr>
-      <tr th:each="document : ${documentList}">
-        <td>[[${document.id}]]</td>
-        <td><a class="fileName" th:href="@{/uploads/{id}/{fileName}(id=${document.id},fileName=${document.fileName})}" >
-        	[[${document.fileName}]]</a></td>
-        <td>[[${document.description}]]</td>
-        <td>[[${document.createdMember.name}]]</td>
-        <td>[[${document.updatedMember.name}]]</td>
-        <td>[[${#dates.format(document.created,'yyyy/MM/dd HH:mm:ss')}]]</td>
-        <td>[[${#dates.format(document.updated,'yyyy/MM/dd HH:mm:ss')}]]</td>
-        <td><a th:href="@{/doc/edit/{id}(id=${document.id})}" class="btn btn-warning btn-sm">編集</a></td>
-        <td><a th:href="@{/doc/delete/{id}(id=${document.id})}" class="btn btn-danger btn-sm delete"
+      <table class="table table-bordered" style="table-layout: fixed">
+        <tr>
+          <th style="width:42px">ID</th>
+          <th style="width:223px">ファイル名</th>
+          <th style="width:179px">概要</th>
+          <th style="width:94px">登録者</th>
+          <th style="width:94px">更新者</th>
+          <th style="width:146px">登録日付</th>
+          <th style="width:146px">更新日付</th>
+          <th style="width:92px">更新</th>
+          <th style="width:92px">削除</th>
+        </tr>
+        <tr th:each="document : ${documentList}">
+          <td>[[${document.id}]]</td>
+          <td><a class="fileName" th:href="@{/uploads/{id}/{fileName}(id=${document.id},fileName=${document.fileName})}">
+              [[${document.fileName}]]</a></td>
+          <td>[[${document.description}]]</td>
+          <td>[[${document.createdMember.name}]]</td>
+          <td>[[${document.updatedMember.name}]]</td>
+          <td>[[${#dates.format(document.created,'yyyy/MM/dd HH:mm:ss')}]]</td>
+          <td>[[${#dates.format(document.updated,'yyyy/MM/dd HH:mm:ss')}]]</td>
+          <td><a th:href="@{/doc/edit/{id}(id=${document.id})}" class="btn btn-warning btn-sm">編集</a></td>
+          <td><a th:href="@{/doc/delete/{id}(id=${document.id})}" class="btn btn-danger btn-sm delete"
         	   data-toggle="modal" data-target="#confirm-modal" th:data-name="'ドキュメントID='+${document.id}">削除</a></td>
-      </tr>
-    </table>
+        </tr>
+      </table>
+    </div>
 	<!-- ページネーションを表示 -->
 	<div th:replace="~{widget/pagination :: pagination(${totalPages}, ${page}, 'doc/list')}"></div>
     
@@ -75,6 +79,11 @@
 				}
 			}
 		});
+    	$('.fileName').each(function(){
+    		if($(this).attr('href').slice(-4)=='.pdf'){
+    			$(this).attr('target','_blank');
+    		}
+    	});
 	});
 </script>
 </body>

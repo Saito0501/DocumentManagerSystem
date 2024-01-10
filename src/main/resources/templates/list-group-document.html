@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th= "http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link th:href="@{/css/slick.css}" rel="stylesheet" />
+  <link th:href="@{/css/slick-theme.css}" rel="stylesheet" />
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+  <link th:href="@{/css/style.css}" rel="stylesheet" />
+  <script th:src="@{/js/jquery-3.5.1.min.js}"></script>
+  <title>ドキュメント管理システム</title>
+</head>
+<body>
+<div class="container">
+
+<header th:replace="~{parts/common::header()}"></header>
+
+<div class="row">
+  <div class="col-4 text-nowrap"><h1 class="my-4 h3">ドキュメント一覧</h1></div>
+  <div class="col-8 text-nowrap float-right text-right">
+  <a th:href="@{/doc/list}" class="btn btn-primary my-4 h3 mr-3">表示切替</a></div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div th:if="${message != null}" class="alert alert-success text-center w-75 mx-auto">
+		[[${message}]]
+	</div>
+	<!-- リマインドメッセージ -->
+	<div th:if="${RemindCount>0}" class="alert alert-danger text-center w-75 mx-auto">
+		未完了のリマインドが、<a th:href="@{/doc/member/show}" class="RemindCnt">[[${RemindCount}]]</a>件あります。
+	</div>
+	<div class="row mb-3">
+      <div class="col-6 text-nowrap"><a th:href="@{/doc/add}" class="btn btn-primary">ドキュメントの追加</a></div>
+    </div>
+    
+    <div th:each="group : ${groupList}" class="groupList">
+      <div><h5>[[${group.name}]]</h5></div>
+      <div class="slider">
+        <div class="col" th:each="document : ${documentList}" th:if="${document.groupId==group.id}">
+          <div class="details">
+            <div class="text-center documentId">ID：[[${document.id}]]</div>
+            <a class="fileName" th:href="@{/uploads/{id}/{fileName}(id=${document.id},fileName=${document.fileName})}" >
+              [[${document.fileName}]]</a>
+            <p>登録者：[[${document.createdMember.name}]]</p>
+            <p>更新者：[[${document.updatedMember.name}]]</p>
+            <p>登録日：[[${#dates.format(document.created,'yyyy/MM/dd HH:mm:ss')}]]</p>
+            <p>更新日：[[${#dates.format(document.updated,'yyyy/MM/dd HH:mm:ss')}]]</p>
+            <div class="btn-group-sm text-center">
+              <a th:href="@{/doc/edit/{id}(id=${document.id})}" class="btn btn-warning edit text-nowrap">編集</a>
+              <a th:href="@{/doc/delete/{id}(id=${document.id})}" class="btn btn-danger delete text-nowrap" 
+                 data-toggle="modal" data-target="#confirm-modal" th:data-name="'ドキュメントID='+${document.id}">削除</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="groupList">
+      <div><h5>グループなし</h5></div>
+      <div class="slider">
+        <div class="col" th:each="document : ${documentList}" th:if="${document.groupId==0}">
+          <div class="details">
+            <div class="text-center documentId">ID：[[${document.id}]]</div>
+            <a class="fileName" th:href="@{/uploads/{id}/{fileName}(id=${document.id},fileName=${document.fileName})}" >
+              [[${document.fileName}]]</a>
+            <p>登録者：[[${document.createdMember.name}]]</p>
+            <p>更新者：[[${document.updatedMember.name}]]</p>
+            <p>登録日：[[${#dates.format(document.created,'yyyy/MM/dd HH:mm:ss')}]]</p>
+            <p>更新日：[[${#dates.format(document.updated,'yyyy/MM/dd HH:mm:ss')}]]</p>
+            <div class="btn-group-sm text-center">
+              <a th:href="@{/doc/edit/{id}(id=${document.id})}" class="btn btn-warning edit text-nowrap">編集</a>
+              <a th:href="@{/doc/delete/{id}(id=${document.id})}" class="btn btn-danger delete text-nowrap" 
+                 data-toggle="modal" data-target="#confirm-modal" th:data-name="'ドキュメントID='+${document.id}">削除</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+  </div><!-- /.col- -->
+</div><!-- /.row -->
+
+</div><!-- /.container -->
+<script>
+    $(document).ready(function(){
+    	/* 表示項目がないグループは非表示 */
+    	$('.groupList').each(function(){
+    		if($(this).find('.details').length==0){
+    			$(this).hide();
+    		}
+    	});
+    	/* pdf.jsの設定 */
+    	$('.fileName').each(function(){
+    		if($(this).attr('href').slice(-4)=='.pdf'){
+    			let pdfUrl = $(this).attr('href');
+    			$(this).attr('href','/pdfjs/web/viewer.html?file='+pdfUrl+'#zoom=page-fit');
+    			$(this).attr('target','_blank');
+    		}
+    	});
+    	/* slick.jsの設定 */
+        $('.slider').slick({
+        dots: true,
+        infinite: true,
+        speed: 300,
+        slidesToShow: 4,
+        slidesToScroll: 2,
+        prevArrow: '<button class="slide-arrow prev-arrow"></button>',
+        nextArrow: '<button class="slide-arrow next-arrow"></button>',
+        responsive: [
+            {
+                breakpoint: 1200,
+                settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 3,
+                    infinite: true,
+                    dots: true
+            }
+            },
+            {
+	            breakpoint: 992,
+	            settings: {
+	                slidesToShow: 2,
+	                slidesToScroll: 2,
+	                infinite: true,
+	                dots: true
+            }
+            },
+            {
+	            breakpoint: 768,
+	            settings: {
+	                slidesToShow: 1,
+	                slidesToScroll: 1,
+	                arrows: false
+            }
+            }
+        ]
+        });
+    });
+</script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/slick.min.js}"></script>
+<th:block th:replace="~{parts/common :: deleteConfirm('ドキュメント')}"></th:block>
+
+</body>
+</html>

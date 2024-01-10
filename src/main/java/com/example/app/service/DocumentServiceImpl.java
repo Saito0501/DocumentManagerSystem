@@ -36,6 +36,11 @@ public class DocumentServiceImpl implements DocumentService {
 	AccessDao accessDao;
 
 	@Override
+	public List<Document> getDocumentList(int memberId) throws Exception {
+		return documentDao.selectAll(memberId);
+	}
+	
+	@Override
 	public List<Document> getDocumentListByPage(
 			int memberId, String fileName, int page, int numPerPage) throws Exception {
 		int offset = numPerPage * (page - 1);
@@ -70,6 +75,7 @@ public class DocumentServiceImpl implements DocumentService {
 		Document document = new Document();
 		document.setFileName(fileName);
 		document.setDescription(formData.getDescription());
+		document.setGroupId(formData.getGroupId());
 		Member createdMember = new Member();
 		createdMember.setId(status.getId());
 		document.setCreatedMember(createdMember);
@@ -116,6 +122,7 @@ public class DocumentServiceImpl implements DocumentService {
 		formData.setDocumentId(document.getId());
 		formData.setFileName(document.getFileName());
 		formData.setDescription(document.getDescription());
+		formData.setGroupId(document.getGroupId());
 		formData.setAccessMemberIdList(
 				accessList.stream().map(s -> s.getMemberId()).collect(Collectors.toList()));
 		if (remindList.size()>0) {
@@ -146,6 +153,7 @@ public class DocumentServiceImpl implements DocumentService {
 		document.setId(formData.getDocumentId());
 		document.setFileName(fileName);
 		document.setDescription(formData.getDescription());
+		document.setGroupId(formData.getGroupId());
 		Member updatedMember = new Member();
 		updatedMember.setId(status.getId());
 		document.setUpdatedMember(updatedMember);
