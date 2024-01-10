@@ -9,6 +9,8 @@ import com.example.app.domain.Document;
 
 @Mapper
 public interface DocumentDao {
+	
+	List<Document> selectAll(int memberId) throws Exception;
 
 	List<Document> selectLimitedByMemberId(
 			@Param("memberId") int memberId,

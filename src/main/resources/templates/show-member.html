@@ -11,7 +11,8 @@
 	[[${message}]]
 </div>
 <p>
-	<a th:href="@{/doc/list}" class="btn btn-primary">ドキュメント一覧に戻る</a>
+	<a th:if="${session.isListGroup}" th:href="@{/doc/listGroup}" class="btn btn-primary">ドキュメント一覧に戻る</a>
+	<a th:unless="${session.isListGroup}" th:href="@{/doc/list}" class="btn btn-primary">ドキュメント一覧に戻る</a>
 </p>
 <div class="row">
   <div class="col-md-12">

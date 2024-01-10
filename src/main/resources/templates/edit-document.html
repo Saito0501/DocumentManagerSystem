@@ -42,6 +42,17 @@
             </td>
           </tr>
           <tr>
+            <th>グループ</th>
+            <td colspan="2">
+              <select th:field="*{groupId}" class="form-select">
+                <option value="0">未選択</option>
+                  <th:block th:each="group : ${groupList}">
+                    <option th:value="${group.id}">[[${group.name}]]</option>
+                  </th:block>
+              </select>
+            </td>
+          </tr>
+          <tr>
             <th rowspan="2">アクセス権</th>
             <td>部署</td>
             <td>
@@ -115,7 +126,8 @@
           </tr>
         </table>
         <input class="btn btn-primary" type="submit" value="保存する">
-        <a th:href="@{/doc/list}" class="btn btn-light">キャンセル</a>
+        <a th:if="${session.isListGroup}" th:href="@{/doc/listGroup}" class="btn btn-light">キャンセル</a>
+        <a th:unless="${session.isListGroup}" th:href="@{/doc/list}" class="btn btn-light">キャンセル</a>
       </form>
 
     </div><!-- /.col- -->

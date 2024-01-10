@@ -18,6 +18,7 @@ public class DocumentForm {
 	private Integer documentId;	//ドキュメント編集用
 	private String fileName;	//ドキュメント編集用
 	private String description;
+	private Integer groupId;
 	private List<Integer> accessDivisionList;
 	@Size(min=1)
 	private List<Integer> accessMemberIdList;

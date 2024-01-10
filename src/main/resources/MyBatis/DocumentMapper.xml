@@ -8,6 +8,7 @@
 		<id property="id" column="id" />
 		<result property="fileName" column="file_name" />
 		<result property="description" column="description" />
+		<result property="groupId" column="group_id" />
 		<result property="created" column="created" />
 		<result property="updated" column="updated" />
 		<association property="createdMember" column="created_id" javaType="com.example.app.domain.Member">
@@ -17,6 +18,18 @@
 			<result property="name" column="updated_name" />
 		</association>
 	</resultMap>
+
+	<select id="selectAll" resultMap="joinedResult">
+		SELECT documents.*,M1.name AS created_name, M2.name AS updated_name
+		FROM documents 
+		JOIN members AS M1
+		ON documents.created_id = M1.id
+		JOIN members AS M2
+		ON documents.updated_id = M2.id
+		JOIN accesses
+		ON documents.id = accesses.document_id
+		WHERE accesses.member_id = #{memberId}
+	</select>
 
 	<select id="selectLimitedByMemberId" resultMap="joinedResult">
 		SELECT documents.*,M1.name AS created_name, M2.name AS updated_name
@@ -75,10 +88,10 @@
 	<insert id="insert" parameterType="com.example.app.domain.Document"
 			useGeneratedKeys="true" keyProperty="id"> 
 		INSERT INTO documents (
-			file_name, description, created_id,
+			file_name, description, group_id, created_id,
 			created, updated_id, updated
 		) VALUES (
-			#{fileName}, #{description}, #{createdMember.id},
+			#{fileName}, #{description}, #{groupId}, #{createdMember.id},
 			NOW(), #{updatedMember.id}, NOW()
 		)
 	</insert>
@@ -89,7 +102,7 @@
 	
 	<update id="update" parameterType="com.example.app.domain.Document"> 
 		UPDATE documents SET
-		file_name = #{fileName}, description= #{description},
+		file_name = #{fileName}, description= #{description}, group_id= #{groupId},
 		updated_id = #{updatedMember.id}, updated = NOW()
 		WHERE id = #{id}
 	</update>

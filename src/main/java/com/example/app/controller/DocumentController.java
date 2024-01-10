@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.app.domain.DocumentForm;
 import com.example.app.login.LoginStatus;
 import com.example.app.service.DivisionService;
+import com.example.app.service.DocumentGroupService;
 import com.example.app.service.DocumentService;
 import com.example.app.service.MemberService;
 import com.example.app.service.RemindService;
@@ -37,6 +38,8 @@ public class DocumentController {
 	@Autowired
 	DocumentService documentService;
 	@Autowired
+	DocumentGroupService documentGroupService;
+	@Autowired
 	RemindService remindService;
 	
 	@GetMapping("/list")
@@ -52,7 +55,21 @@ public class DocumentController {
 		model.addAttribute("page", page);
 		model.addAttribute("fileName", fileName);
 		model.addAttribute("RemindCount", RemindCount);
+		session.setAttribute("isListGroup", false);
 		return "list-document";
+	}
+	
+	@GetMapping("/listGroup")
+	public String listGroup(
+			HttpSession session,
+			Model model) throws Exception {
+		LoginStatus status = (LoginStatus) session.getAttribute("loginStatus");	
+		int RemindCount = remindService.getRemindByTargetId(status.getId()).size();
+		model.addAttribute("documentList", documentService.getDocumentList(status.getId()));
+		model.addAttribute("groupList", documentGroupService.getDocumentGroupList());
+		model.addAttribute("RemindCount", RemindCount);
+		session.setAttribute("isListGroup", true);
+		return "list-group-document";
 	}
 	
 	@GetMapping("/member/show")
@@ -75,6 +92,7 @@ public class DocumentController {
 	@GetMapping("/add")
 	public String addGet(Model model) throws Exception {
 		model.addAttribute("documentForm", new DocumentForm());
+		model.addAttribute("groupList", documentGroupService.getDocumentGroupList());
 		model.addAttribute("memberList", memberService.getMemberList());
 		model.addAttribute("divisionList", divisionService.getDivisionList());
 		return "add-document";
@@ -115,13 +133,18 @@ public class DocumentController {
 		}
 		
 		if (errors.hasErrors()) {
+			model.addAttribute("groupList", documentGroupService.getDocumentGroupList());
 			model.addAttribute("memberList", memberService.getMemberList());
 			model.addAttribute("divisionList", divisionService.getDivisionList());
 			return "add-document";
 		}
 		documentService.addDocument(documentForm, session);
 		redirectAttributes.addFlashAttribute("message", "ドキュメントを追加しました。");
-		return "redirect:/doc/list";
+		if ((boolean) session.getAttribute("isListGroup")) {
+			return "redirect:/doc/listGroup";
+		}else {
+			return "redirect:/doc/list";	
+		}
 	}
 	
 	@GetMapping("/edit/{id}")
@@ -129,6 +152,7 @@ public class DocumentController {
 			@PathVariable Integer id,
 			Model model) throws Exception {
 		model.addAttribute("documentForm", documentService.getDocumentById(id));
+		model.addAttribute("groupList", documentGroupService.getDocumentGroupList());
 		model.addAttribute("memberList", memberService.getMemberList());
 		model.addAttribute("divisionList", divisionService.getDivisionList());
 		return "edit-document";
@@ -165,22 +189,32 @@ public class DocumentController {
 		}
 		
 		if (errors.hasErrors()) {
+			model.addAttribute("groupList", documentGroupService.getDocumentGroupList());
 			model.addAttribute("memberList", memberService.getMemberList());
 			model.addAttribute("divisionList", divisionService.getDivisionList());
 			return "edit-document";
 		}
 		documentService.editDocument(documentForm, session);
 		redirectAttributes.addFlashAttribute("message", "ドキュメントを更新しました。");
-		return "redirect:/doc/list";
+		if ((boolean) session.getAttribute("isListGroup")) {
+			return "redirect:/doc/listGroup";
+		}else {
+			return "redirect:/doc/list";	
+		}
 	}
 	
 	@GetMapping("/delete/{id}")
 	public String deleteGet(
 			@PathVariable("id") Integer id,
+			HttpSession session,
 			RedirectAttributes redirectAttributes) throws Exception {
 		documentService.deleteDocument(id);
 		redirectAttributes.addFlashAttribute("message", "ドキュメントを削除しました。");
-		return "redirect:/doc/list";
+		if ((boolean) session.getAttribute("isListGroup")) {
+			return "redirect:/doc/listGroup";
+		}else {
+			return "redirect:/doc/list";	
+		}
 	}
 	
 }

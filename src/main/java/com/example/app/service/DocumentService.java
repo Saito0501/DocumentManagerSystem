@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpSession;
 
 public interface DocumentService {
 	 
+	 List<Document> getDocumentList(int memberId) throws Exception;
+	
 	 List<Document> getDocumentListByPage(
 			 int memberId,String fileName,
 			 int page, int numPerPage) throws Exception;
